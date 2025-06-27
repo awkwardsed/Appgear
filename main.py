@@ -1,7 +1,7 @@
 import os
 import subprocess
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 
 class AppImageLauncherMaker:
     def __init__(self, root):
@@ -27,6 +27,14 @@ class AppImageLauncherMaker:
         self.icon_button = tk.Button(root, text="Select Icon", command=self.select_icon)
         self.icon_button.pack()
 
+        # Category Selection
+        self.category_label = tk.Label(root, text="Select Category:")
+        self.category_label.pack()
+        self.category_combobox = ttk.Combobox(root, values=[
+            "Utility", "Development", "Graphics", "Education", "Games", "Office", "Internet", "Multimedia", "Science"
+        ])
+        self.category_combobox.pack()
+
         # Create Launcher Button
         self.create_button = tk.Button(root, text="Create Launcher", command=self.create_launcher)
         self.create_button.pack()
@@ -45,8 +53,9 @@ class AppImageLauncherMaker:
     def create_launcher(self):
         name = self.name_entry.get()
         icon = self.icon_entry.get()
+        category = self.category_combobox.get()
 
-        if not self.appimage_path or not name or not icon:
+        if not self.appimage_path or not name or not icon or not category:
             messagebox.showerror("Error", "Please fill all fields and select an AppImage.")
             return
 
@@ -60,7 +69,7 @@ Name={name}
 Exec={self.appimage_path}
 Icon={icon}
 Type=Application
-Categories=Utility;
+Categories={category};
 """
         desktop_file_path = os.path.join(os.path.expanduser("~/.local/share/applications"), f"{name}.desktop")
         with open(desktop_file_path, "w") as f:
@@ -75,4 +84,3 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = AppImageLauncherMaker(root)
     root.mainloop()
-
